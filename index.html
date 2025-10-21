@@ -90,9 +90,10 @@
             hole.className = 'hole';
             hole.id = 'hole' + i;
             const mole = document.createElement('img');
-            mole.src = 'telecharge-2.jpg';
+            mole.src = './telecharge-2.jpg';
             mole.className = 'mole';
             mole.id = 'mole' + i;
+            mole.style.display = 'none';
             hole.appendChild(mole);
             gameDiv.appendChild(hole);
             moles.push(mole);
