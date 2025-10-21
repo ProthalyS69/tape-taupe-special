@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Tape Taupe Special</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #faef95;
+            text-align: center;
+        }
+        #game {
+            margin: 20px auto;
+            width: 400px;
+        }
+        .hole {
+            width: 128px;
+            height: 128px;
+            display: inline-block;
+            margin: 12px;
+            background: #c2a775;
+            border-radius: 50%;
+            position: relative;
+            overflow: hidden;
+        }
+        .mole {
+            width: 128px;
+            height: 128px;
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            cursor: pointer;
+        }
+        #score {
+            font-size: 20px;
+        }
+        #start {
+            margin: 10px;
+            padding: 10px 25px;
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Tape Taupe Special</h1>
+    <div id="score">Score : 0</div>
+    <button id="start">Démarrer</button>
+    <div id="game">
+        <div class="hole" id="hole1"><img src="telecharge-2.jpg" class="mole" id="mole1"></div>
+        <div class="hole" id="hole2"><img src="telecharge-2.jpg" class="mole" id="mole2"></div>
+        <div class="hole" id="hole3"><img src="telecharge-2.jpg" class="mole" id="mole3"></div>
+    </div>
+    <script>
+        const moles = [
+            document.getElementById('mole1'),
+            document.getElementById('mole2'),
+            document.getElementById('mole3'),
+        ];
+        let score = 0;
+        let running = false;
+        let moleIndex = -1;
+        let moleTimeout = null;
+
+        function showRandomMole() {
+            moleIndex = Math.floor(Math.random() * moles.length);
+            moles[moleIndex].style.display = 'block';
+            moleTimeout = setTimeout(() => {
+                moles[moleIndex].style.display = 'none';
+                if (running) showRandomMole();
+            }, 800 + Math.random() * 400);
+        }
+
+        function startGame() {
+            if (running) return;
+            score = 0;
+            document.getElementById('score').textContent = 'Score : ' + score;
+            running = true;
+            showRandomMole();
+        }
+
+        document.getElementById('start').onclick = startGame;
+
+        moles.forEach((mole, i) => {
+            mole.onclick = function() {
+                if (mole.style.display === 'block' && running) {
+                    score++;
+                    document.getElementById('score').textContent = 'Score : ' + score;
+                    mole.style.display = 'none';
+                    clearTimeout(moleTimeout);
+                    if (running) showRandomMole();
+                }
+            };
+        });
+    </script>
+</body>
+</html>
