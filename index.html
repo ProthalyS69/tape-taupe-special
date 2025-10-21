@@ -9,72 +9,110 @@
             background: #faef95;
             text-align: center;
         }
-        #game {
-            margin: 20px auto;
-            width: 400px;
-        }
-        .hole {
-            width: 128px;
-            height: 128px;
-            display: inline-block;
-            margin: 12px;
-            background: #c2a775;
-            border-radius: 50%;
-            position: relative;
-            overflow: hidden;
-        }
-        .mole {
-            width: 128px;
-            height: 128px;
-            display: none;
-            position: absolute;
-            top: 0;
-            left: 0;
-            cursor: pointer;
+        #topbar {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+            gap: 20px;
         }
         #score {
-            font-size: 20px;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        #scoreIcon {
+            width: 32px;
+            height: 32px;
+            vertical-align: middle;
         }
         #start {
             margin: 10px;
             padding: 10px 25px;
             font-size: 20px;
         }
+        #game {
+            margin: 20px auto;
+            width: 410px;
+            display: grid;
+            grid-template-columns: repeat(3, 128px);
+            grid-template-rows: repeat(3, 128px);
+            gap: 10px;
+            justify-content: center;
+        }
+        .hole {
+            width: 128px;
+            height: 128px;
+            background: #c2a775;
+            border-radius: 50%;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+        }
+        .mole {
+            width: 128px;
+            height: 128px;
+            display: none;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            cursor: pointer;
+            transition: opacity 0.1s;
+        }
     </style>
 </head>
 <body>
     <h1>Tape Taupe Special</h1>
-    <div id="score">Score : 0</div>
-    <button id="start">Démarrer</button>
-    <div id="game">
-        <div class="hole" id="hole1"><img src="telecharge-2.jpg" class="mole" id="mole1"></div>
-        <div class="hole" id="hole2"><img src="telecharge-2.jpg" class="mole" id="mole2"></div>
-        <div class="hole" id="hole3"><img src="telecharge-2.jpg" class="mole" id="mole3"></div>
+    <div id="topbar">
+        <div id="score">
+            <img src="https://cdn-icons-png.flaticon.com/512/833/833472.png" id="scoreIcon" alt="Score">
+            <span id="scoreValue">0</span>
+        </div>
+        <button id="start">Démarrer</button>
     </div>
+    <div id="game"></div>
     <script>
-        const moles = [
-            document.getElementById('mole1'),
-            document.getElementById('mole2'),
-            document.getElementById('mole3'),
-        ];
+        // Gérer les 9 trous
+        const gameDiv = document.getElementById('game');
         let score = 0;
         let running = false;
         let moleIndex = -1;
         let moleTimeout = null;
+        const totalHoles = 9;
+        let moles = [];
+        
+        // Générer les trous dynamiquement
+        for (let i = 0; i < totalHoles; i++) {
+            const hole = document.createElement('div');
+            hole.className = 'hole';
+            hole.id = 'hole' + i;
+            const mole = document.createElement('img');
+            mole.src = 'telecharge-2.jpg';
+            mole.className = 'mole';
+            mole.id = 'mole' + i;
+            hole.appendChild(mole);
+            gameDiv.appendChild(hole);
+            moles.push(mole);
+        }
 
         function showRandomMole() {
-            moleIndex = Math.floor(Math.random() * moles.length);
-            moles[moleIndex].style.display = 'block';
+            moles.forEach(mole => mole.style.display = 'none'); // Cacher toutes les taupes
+            moleIndex = Math.floor(Math.random() * totalHoles);
+            let selectedMole = moles[moleIndex];
+            selectedMole.style.display = 'block';
             moleTimeout = setTimeout(() => {
-                moles[moleIndex].style.display = 'none';
+                selectedMole.style.display = 'none';
                 if (running) showRandomMole();
-            }, 800 + Math.random() * 400);
+            }, 2000); // 2 secondes
         }
 
         function startGame() {
             if (running) return;
             score = 0;
-            document.getElementById('score').textContent = 'Score : ' + score;
+            document.getElementById('scoreValue').textContent = score;
             running = true;
             showRandomMole();
         }
@@ -85,7 +123,7 @@
             mole.onclick = function() {
                 if (mole.style.display === 'block' && running) {
                     score++;
-                    document.getElementById('score').textContent = 'Score : ' + score;
+                    document.getElementById('scoreValue').textContent = score;
                     mole.style.display = 'none';
                     clearTimeout(moleTimeout);
                     if (running) showRandomMole();
